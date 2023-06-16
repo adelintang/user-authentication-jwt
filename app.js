@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { MongooseConnect } = require('./model/User');
+const cookieParser = require('cookie-parser');
+
+const MongooseConnect = require('./config/db');
+const authRoutes = require('./routes/auth');
 
 const app = express();
-const port = 5000;
+const PORT = process.env.PORT || 5000;
 
 require('dotenv').config();
 
@@ -12,11 +15,12 @@ MongooseConnect();
 
 app.use(bodyParser.json());
 
-app.use('/register', require('./routes/register'));
+app.use(cookieParser());
 
-// auth | logout
-app.use('/', require('./routes/auth'));
+// auth routes
+app.use(authRoutes);
 
+// route user akses
 app.use('/user', require('./routes/user'));
 
-app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
